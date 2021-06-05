@@ -26,12 +26,6 @@ void sleep_ms(int milliseconds) {
 #include "include/game.h"
 
 int main() {
-    enum Direction dir = RIGHT;
-
-    Game *game = init_game(20);
-
-    if (!game) return 1;
-
     WINDOW *w = initscr();
     cbreak();
     nodelay(w, TRUE);
@@ -41,6 +35,12 @@ int main() {
         getch();
         return -1;
     }
+
+    enum Direction dir = RIGHT;
+
+    Game *game = init_game(20);
+
+    if (!game) return 1;
 
     start_color();
 
