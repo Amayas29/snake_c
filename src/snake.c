@@ -21,6 +21,8 @@ Cell *create_cell(Point pos) {
     cell->pos = pos;
 
     cell->suiv = NULL;
+
+    cell->dir = None;
     return cell;
 }
 
@@ -39,8 +41,6 @@ Snake *create_snake() {
     snake->head = NULL;
     snake->tail = NULL;
 
-    snake->dir = RIGHT;
-
     return snake;
 }
 
@@ -56,11 +56,28 @@ void add_cell(Snake *snake, Cell *cell) {
 
     cell->suiv = NULL;
 
-    if (!snake->head)
+    if (!snake->head) {
+        cell->dir = RIGHT;
         snake->head = cell;
+    }
 
-    if (snake->tail)
+    if (snake->tail) {
+        Point pos = snake->tail->pos;
+
+        if (cell->pos.x < pos.x)
+            cell->dir = RIGHT;
+
+        else if (cell->pos.x > pos.x)
+            cell->dir = LEFT;
+
+        else if (cell->pos.y > pos.y)
+            cell->dir = UP;
+
+        else if (cell->pos.y < pos.y)
+            cell->dir = DOWN;
+
         snake->tail->suiv = cell;
+    }
 
     snake->tail = cell;
 }
@@ -84,10 +101,10 @@ static int inverse_direction(enum Direction dir1, enum Direction dir2) {
 
 static void move_cell(Cell *cell, enum Direction dir) {
     if (dir == UP)
-        cell->pos.y += 1;
+        cell->pos.y -= 1;
 
     else if (dir == DOWN)
-        cell->pos.y -= 1;
+        cell->pos.y += 1;
 
     else if (dir == RIGHT)
         cell->pos.x += 1;
@@ -96,12 +113,12 @@ static void move_cell(Cell *cell, enum Direction dir) {
         cell->pos.x -= 1;
 }
 
-void move_snake(Snake *snake, enum Direction dir) {
-    if (!snake || !snake->head) return;
+int move_snake(Snake *snake, enum Direction dir) {
+    if (!snake || !snake->head) return 0;
 
-    if (inverse_direction(dir, snake->dir)) return;
+    if (inverse_direction(dir, snake->head->dir)) return 0;
 
-    if (dir == None) return;
+    if (dir == None) return 0;
 
     Point old_pos = snake->head->pos;
 
@@ -112,4 +129,24 @@ void move_snake(Snake *snake, enum Direction dir) {
     }
 
     move_cell(snake->head, dir);
+
+    Point pred = snake->head->pos;
+    for (Cell *current = snake->head; current; current = current->suiv) {
+        if (current->pos.x < pred.x)
+            current->dir = RIGHT;
+
+        else if (current->pos.x > pred.x)
+            current->dir = LEFT;
+
+        else if (current->pos.y > pred.y)
+            current->dir = UP;
+
+        else if (current->pos.y < pred.y)
+            current->dir = DOWN;
+
+        pred = current->pos;
+    }
+
+    snake->head->dir = dir;
+    return 1;
 }

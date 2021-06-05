@@ -5,11 +5,11 @@
 
 typedef struct cell {
     Point pos;
+    enum Direction dir;
     struct cell *suiv;
 } Cell;
 
 typedef struct snake {
-    enum Direction dir;
     Cell *head;
     Cell *tail;
 } Snake;
@@ -25,6 +25,6 @@ void destroy_snake(Snake *snake);
 void add_cell(Snake *snake, Cell *cell);
 void destroy_cells(Cell *cells);
 
-void move_snake(Snake *snake, enum Direction dir);
+int move_snake(Snake *snake, enum Direction dir);
 
 #endif
