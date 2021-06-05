@@ -6,14 +6,6 @@
 
 #define MIN_LENGTH 5
 
-Cell *get(Snake *snake, int x, int y) {
-    for (Cell *current = snake->head; current; current = current->suiv) {
-        if (current->pos.x == x && current->pos.y == y) return current;
-    }
-
-    return NULL;
-}
-
 Game *init_game(int length) {
     if (length < MIN_LENGTH) return NULL;
 
@@ -108,22 +100,23 @@ void show(Game *game) {
             else if (game->map[i][j] == SnakeCell) {
                 attron(COLOR_PAIR(2));
 
-                enum Direction dir = get(game->snake, j, i)->dir;
-                // if (j == head.x && i == head.y) {
-                if (dir == UP)
-                    printw("^");
+                if (j == head.x && i == head.y) {
+                    enum Direction dir = game->snake->head->dir;
 
-                else if (dir == DOWN)
-                    printw("V");
+                    if (dir == UP)
+                        printw("^");
 
-                else if (dir == RIGHT)
-                    printw(">");
+                    else if (dir == DOWN)
+                        printw("V");
 
-                else if (dir == LEFT)
-                    printw("<");
+                    else if (dir == RIGHT)
+                        printw(">");
 
-                // } else
-                //     printw("o");
+                    else if (dir == LEFT)
+                        printw("<");
+
+                } else
+                    printw("o");
 
                 attroff(COLOR_PAIR(2));
 
