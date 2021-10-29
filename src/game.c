@@ -6,10 +6,13 @@
 
 #define MIN_LENGTH 5
 
-Game *init_game(int length) {
-    if (length < MIN_LENGTH) return NULL;
+static void add_apple(Game* game);
 
-    Game *game = malloc(sizeof(Game));
+Game* init_game(int length) {
+    if (length < MIN_LENGTH)
+        return NULL;
+
+    Game* game = malloc(sizeof(Game));
 
     if (!game) {
         fprintf(stderr, "Failed to allocate the game\n");
@@ -17,7 +20,7 @@ Game *init_game(int length) {
     }
 
     game->length = length;
-    game->map = malloc(sizeof(enum CellType *) * length);
+    game->map = malloc(sizeof(enum CellType*) * length);
 
     if (!game->map) {
         fprintf(stderr, "Failed to allocate the map\n");
@@ -41,31 +44,30 @@ Game *init_game(int length) {
             game->map[i][j] = EmptyCell;
     }
 
-    game->apple = NULL;  // TODO
-
-    Point pos = {length / 2, length / 2};
+    Point pos = { length / 2, length / 2 };
     game->snake = init_snake(pos);
 
     game->map[game->snake->head->pos.y][game->snake->head->pos.x] = SnakeCell;
 
+    game->apple = 0;
     return game;
 }
 
-void destroy_game(Game *game) {
-    if (!game) return;
+void destroy_game(Game* game) {
+    if (!game)
+        return;
 
     for (int i = 0; i < game->length; i++)
         free(game->map[i]);
 
     free(game->map);
     destroy_snake(game->snake);
-    // TODO
-
     free(game);
 }
 
-void show(Game *game) {
-    if (!game) return;
+void show(Game* game) {
+    if (!game)
+        return;
 
     Point head = game->snake->head->pos;
 
@@ -139,22 +141,29 @@ void show(Game *game) {
     }
 }
 
-static int collid_wall(Snake *snake, int length) {
+static int collid_wall(Snake* snake, int length) {
     Point pos = snake->head->pos;
 
     return (pos.x == 0 || pos.x == length - 1 || pos.y == 0 || pos.y == length - 1);
 }
 
-int update(Game *game, enum Direction dir) {
-    if (!game || !game->snake || !game->snake->head) return 0;
+int update(Game* game, enum Direction dir) {
 
-    if (collid_wall(game->snake, game->length)) return 0;
+    if (!game || !game->snake || !game->snake->head)
+        return 0;
+
+    if (collid_wall(game->snake, game->length))
+        return 0;
+
+    if (game->apple == 0)
+        add_apple(game);
 
     Point old_pos = game->snake->tail->pos;
 
     int move = move_snake(game->snake, dir);
 
-    if (!move) return 1;
+    if (!move)
+        return 1;
 
     game->map[old_pos.y][old_pos.x] = EmptyCell;
 
@@ -164,16 +173,20 @@ int update(Game *game, enum Direction dir) {
 
     game->map[new_pos.y][new_pos.x] = SnakeCell;
 
-    if (collid_wall(game->snake, game->length)) return 0;
+    if (collid_wall(game->snake, game->length))
+        return 0;
 
-    if (type == WallCell) return 0;
+    if (type == WallCell)
+        return 0;
 
-    if (type == SnakeCell) return 0;
+    if (type == SnakeCell)
+        return 0;
 
     if (type == AppleCell) {
+        game->apple = 0;
         Point tail_pos = game->snake->tail->pos;
 
-        Point new = {tail_pos.x, tail_pos.y};
+        Point new = { tail_pos.x, tail_pos.y };
 
         enum Direction t_dir = game->snake->tail->dir;
 
@@ -197,4 +210,14 @@ int update(Game *game, enum Direction dir) {
     }
 
     return 1;
+}
+
+static void add_apple(Game* game) {
+
+    Point pos = generate_apple(game->length);
+
+    if (game->map[pos.x][pos.y] == EmptyCell) {
+        game->map[pos.x][pos.y] = AppleCell;
+        game->apple = 1;
+    }
 }

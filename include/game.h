@@ -10,7 +10,8 @@
 #define S_KEY_RIGHT 100
 #define S_KEY_LEFT 113
 
-enum CellType {
+enum CellType
+{
     EmptyCell,
     AppleCell,
     SnakeCell,
@@ -18,16 +19,16 @@ enum CellType {
 };
 
 typedef struct {
-    Snake *snake;
-    Apple *apple;
+    Snake* snake;
     int length;
-    enum CellType **map;
+    int apple;
+    enum CellType** map;
 } Game;
 
-Game *init_game(int length);
-void destroy_game(Game *game);
-void show(Game *game);
+Game* init_game(int length);
+void destroy_game(Game* game);
+void show(Game* game);
 
-int update(Game *game, enum Direction dir);
+int update(Game* game, enum Direction dir);
 
 #endif

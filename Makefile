@@ -4,7 +4,7 @@ PROGS = snake
 
 all : $(PROGS)
 
-snake : main.o snake.o game.o sleep.o
+snake : main.o snake.o game.o sleep.o apple.o
 	$(CC) $(FLAGS) -o $@ $^ -lncurses
 
 main.o : main.c include/game.h
@@ -18,6 +18,12 @@ game.o : src/game.c include/*.h common/common.h
 
 sleep.o : common/sleep.c common/sleep.h
 	$(CC) $(FLAGS) -c $<
+
+apple.o: src/apple.c include/apple.h
+	$(CC) $(FLAGS) -c $<
+
+run:
+	./$(PROGS)
 
 clean: 
 	rm -f *.o $(PROGS)

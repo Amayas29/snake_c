@@ -1,7 +1,7 @@
 
 #include "sleep.h"
 
-#include <stdio.h>  // Bug in the #elif ?
+#include <stdio.h> // Bug in the #elif ?
 
 #ifdef WIN32
 #include <windows.h>

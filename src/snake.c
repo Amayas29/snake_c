@@ -3,15 +3,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Snake *init_snake(Point pos) {
-    Snake *snake = create_snake();
+Snake* init_snake(Point pos) {
+    Snake* snake = create_snake();
     add_cell(snake, create_cell(pos));
 
     return snake;
 }
 
-Cell *create_cell(Point pos) {
-    Cell *cell = malloc(sizeof(Cell));
+Cell* create_cell(Point pos) {
+    Cell* cell = malloc(sizeof(Cell));
 
     if (!cell) {
         fprintf(stderr, "Failed to allocate the cell\n");
@@ -26,12 +26,12 @@ Cell *create_cell(Point pos) {
     return cell;
 }
 
-void destroy_cell(Cell *cell) {
+void destroy_cell(Cell* cell) {
     free(cell);
 }
 
-Snake *create_snake() {
-    Snake *snake = malloc(sizeof(Snake));
+Snake* create_snake() {
+    Snake* snake = malloc(sizeof(Snake));
 
     if (!snake) {
         fprintf(stderr, "Failed to allocate the snake\n");
@@ -44,15 +44,17 @@ Snake *create_snake() {
     return snake;
 }
 
-void destroy_snake(Snake *snake) {
-    if (!snake) return;
+void destroy_snake(Snake* snake) {
+    if (!snake)
+        return;
 
     destroy_cells(snake->head);
     free(snake);
 }
 
-void add_cell(Snake *snake, Cell *cell) {
-    if (!snake || !cell) return;
+void add_cell(Snake* snake, Cell* cell) {
+    if (!snake || !cell)
+        return;
 
     cell->suiv = NULL;
 
@@ -82,8 +84,8 @@ void add_cell(Snake *snake, Cell *cell) {
     snake->tail = cell;
 }
 
-void destroy_cells(Cell *cells) {
-    Cell *tmp = NULL;
+void destroy_cells(Cell* cells) {
+    Cell* tmp = NULL;
 
     while (cells) {
         tmp = cells->suiv;
@@ -93,13 +95,15 @@ void destroy_cells(Cell *cells) {
 }
 
 static int inverse_direction(enum Direction dir1, enum Direction dir2) {
-    if ((dir1 == UP && dir2 == DOWN) || (dir2 == UP && dir1 == DOWN)) return 1;
-    if ((dir1 == RIGHT && dir2 == LEFT) || (dir2 == RIGHT && dir1 == LEFT)) return 1;
+    if ((dir1 == UP && dir2 == DOWN) || (dir2 == UP && dir1 == DOWN))
+        return 1;
+    if ((dir1 == RIGHT && dir2 == LEFT) || (dir2 == RIGHT && dir1 == LEFT))
+        return 1;
 
     return 0;
 }
 
-static void move_cell(Cell *cell, enum Direction dir) {
+static void move_cell(Cell* cell, enum Direction dir) {
     if (dir == UP)
         cell->pos.y -= 1;
 
@@ -113,16 +117,19 @@ static void move_cell(Cell *cell, enum Direction dir) {
         cell->pos.x -= 1;
 }
 
-int move_snake(Snake *snake, enum Direction dir) {
-    if (!snake || !snake->head) return 0;
+int move_snake(Snake* snake, enum Direction dir) {
+    if (!snake || !snake->head)
+        return 0;
 
-    if (inverse_direction(dir, snake->head->dir)) return 0;
+    if (inverse_direction(dir, snake->head->dir))
+        dir = snake->head->dir;
 
-    if (dir == None) return 0;
+    if (dir == None)
+        return 0;
 
     Point old_pos = snake->head->pos;
 
-    for (Cell *current = snake->head; current; current = current->suiv) {
+    for (Cell* current = snake->head; current; current = current->suiv) {
         Point tmp = current->pos;
         current->pos = old_pos;
         old_pos = tmp;
@@ -131,7 +138,7 @@ int move_snake(Snake *snake, enum Direction dir) {
     move_cell(snake->head, dir);
 
     Point pred = snake->head->pos;
-    for (Cell *current = snake->head; current; current = current->suiv) {
+    for (Cell* current = snake->head; current; current = current->suiv) {
         if (current->pos.x < pred.x)
             current->dir = RIGHT;
 

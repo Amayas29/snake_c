@@ -3,8 +3,6 @@
 
 #include "../common/common.h"
 
-typedef struct {
-    Point pos;
-} Apple;
+Point generate_apple(int limit);
 
 #endif

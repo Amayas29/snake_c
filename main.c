@@ -4,7 +4,7 @@
 #include "include/game.h"
 
 int main() {
-    WINDOW *w = initscr();
+    WINDOW* w = initscr();
     cbreak();
     nodelay(w, TRUE);
 
@@ -16,26 +16,15 @@ int main() {
 
     enum Direction dir = RIGHT;
 
-    Game *game = init_game(20);
+    Game* game = init_game(20);
 
-    if (!game) return 1;
+    if (!game)
+        return 1;
 
     start_color();
 
     init_pair(1, COLOR_RED, COLOR_BLACK);
     init_pair(2, COLOR_YELLOW, COLOR_BLACK);
-
-    game->map[2][3] = AppleCell;
-    game->map[4][6] = AppleCell;
-
-    game->map[1][3] = AppleCell;
-    game->map[3][6] = AppleCell;
-
-    game->map[1][8] = AppleCell;
-
-    game->map[6][6] = AppleCell;
-    game->map[5][8] = AppleCell;
-    game->map[6][5] = AppleCell;
 
     int key = 0;
 
@@ -58,16 +47,19 @@ int main() {
         else if (key == S_KEY_LEFT)
             dir = LEFT;
 
-        if (!update(game, dir)) break;
+        if (!update(game, dir))
+            break;
 
         refresh();
 
-        sleep_ms(250);
+        sleep_ms(240);
     }
 
     printw("\n\tGame Over ...");
+    printw("\n\n\tPress a key to exit");
+    refresh();
 
-    getch();
+    getchar();
     endwin();
 
     destroy_game(game);
